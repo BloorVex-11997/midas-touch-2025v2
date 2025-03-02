@@ -18,6 +18,6 @@ const float RPM = 0.0;
 const float HORIZONTAL_DRIFT = 0.0;
 
 const pros::MotorGearset GEARSET = pros::MotorGearset::blue;
-const float WHEEL_DIAMETER = 4;
+const float WHEEL_DIAMETER = lemlib::Omniwheel::NEW_2;
 const float DISTANCE = 0;
 const float GEAR_RATIO = 1;

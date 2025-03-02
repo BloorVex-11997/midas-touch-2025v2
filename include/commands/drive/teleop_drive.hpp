@@ -3,6 +3,8 @@
 #include "lemlib/chassis/chassis.hpp"
 #include "subsystems/drivetrain.hpp"
 #include "uvlib/command_api.hpp"
+#include "uvlib/input/controller.hpp"
+#include "uvlib/input/joystick.hpp"
 #include "uvlib/input_api.hpp"
 
 class TeleopDrive : public uvl::CommandHelper<uvl::Command, TeleopDrive> {
@@ -17,4 +19,6 @@ public:
 
 private:
   lemlib::Chassis *m_chassis;
+  uvl::Joystick m_left_joystick;
+  uvl::Joystick m_right_joystick;
 };

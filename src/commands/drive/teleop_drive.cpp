@@ -1,14 +1,16 @@
 #include "commands/drive/teleop_drive.hpp"
+#include "uvlib/input/controller.hpp"
 
-TeleopDrive::TeleopDrive(Drivetrain *drivetrain)
-    : m_chassis(drivetrain->get_chassis()) {
+TeleopDrive::TeleopDrive(Drivetrain *drivetrain, uvl::Controller *controller)
+    : m_chassis(drivetrain->get_chassis()),
+      m_left_joystick(controller->left_joystick()),
+      m_right_joystick(controller->right_joystick()) {
   add_requirements({drivetrain});
 }
 
 void TeleopDrive::execute() {
-  int leftY = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
-  int rightX = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
+  int leftY = m_left_joystick.get_x();
+  int rightX = m_right_joystick.get_y();
 
-  // move the robot
-  chassis.curvature(leftY, rightX);
+  m_chassis->curvature(leftY, rightX);
 }
