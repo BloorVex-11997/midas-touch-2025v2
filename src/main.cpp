@@ -1,7 +1,9 @@
 #include "main.h"
+#include "commands/clamp/set_clamp_state.hpp"
 #include "commands/drive/auto_follow.hpp"
 #include "commands/drive/teleop_drive.hpp"
 #include "pros/misc.h"
+#include "subsystems/clamp.hpp"
 #include "subsystems/drivetrain.hpp"
 #include "subsystems/intake.hpp"
 #include "uvlib/commands/advanced_commands/instant_command.hpp"
@@ -14,6 +16,7 @@ ASSET(example_txt);
 uvl::Controller *controller;
 Drivetrain *drivetrain;
 Intake *intake;
+Clamp *clamp;
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -27,6 +30,7 @@ void initialize() {
   controller = new uvl::Controller(pros::E_CONTROLLER_MASTER);
   drivetrain = new Drivetrain();
   intake = new Intake();
+  clamp = new Clamp();
 
   drivetrain->set_default_command(TeleopDrive(drivetrain, controller).to_ptr());
 
@@ -92,6 +96,12 @@ void opcontrol() {
   controller->get_trigger(uvl::TriggerButton::kB)
       .on_true(
           uvl::InstantCommand([&]() { intake->disable(); }, {intake}).to_ptr());
+
+  controller->get_trigger(uvl::TriggerButton::kX)
+      .on_true(SetClampState(clamp, ClampState::CLAMPED).to_ptr());
+
+  controller->get_trigger(uvl::TriggerButton::kY)
+      .on_true(SetClampState(clamp, ClampState::UNCLAMPED).to_ptr());
 
   uvl::Scheduler::get_instance().mainloop();
 }
