@@ -11,6 +11,7 @@ class TeleopDrive : public uvl::CommandHelper<uvl::Command, TeleopDrive> {
 public:
   TeleopDrive(Drivetrain *drivetrain, uvl::Controller *controller);
 
+protected:
   void execute() override;
 
   bool is_finished() override;
