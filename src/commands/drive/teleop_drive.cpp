@@ -14,3 +14,7 @@ void TeleopDrive::execute() {
 
   m_chassis->curvature(leftY, rightX);
 }
+
+bool TeleopDrive::is_finished() { return false; }
+
+void TeleopDrive::end(bool interrupted) { m_chassis->curvature(0, 0); }
