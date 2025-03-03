@@ -14,7 +14,7 @@ void SetClampState::initialize() {
   if (m_state == ClampState::CLAMPED) {
     m_clamp->set_voltage(CLAMP_VOLTAGE);
   } else {
-    m_clamp->set_voltage(CLAMP_VOLTAGE);
+    m_clamp->set_voltage(-CLAMP_VOLTAGE);
   }
 }
 
