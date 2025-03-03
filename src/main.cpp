@@ -3,13 +3,17 @@
 #include "commands/drive/teleop_drive.hpp"
 #include "pros/misc.h"
 #include "subsystems/drivetrain.hpp"
+#include "subsystems/intake.hpp"
+#include "uvlib/commands/advanced_commands/instant_command.hpp"
+#include "uvlib/enums.hpp"
 #include "uvlib/input/controller.hpp"
 #include "uvlib/scheduler.hpp"
 
 ASSET(example_txt);
 
-Drivetrain *drivetrain;
 uvl::Controller *controller;
+Drivetrain *drivetrain;
+Intake *intake;
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -20,8 +24,9 @@ uvl::Controller *controller;
 void initialize() {
   pros::lcd::initialize();
 
-  drivetrain = new Drivetrain();
   controller = new uvl::Controller(pros::E_CONTROLLER_MASTER);
+  drivetrain = new Drivetrain();
+  intake = new Intake();
 
   drivetrain->set_default_command(TeleopDrive(drivetrain, controller).to_ptr());
 
@@ -79,4 +84,14 @@ void autonomous() {
  * operator control task will be stopped. Re-enabling the robot will restart the
  * task, not resume it from where it left off.
  */
-void opcontrol() { uvl::Scheduler::get_instance().mainloop(); }
+void opcontrol() {
+  controller->get_trigger(uvl::TriggerButton::kA)
+      .on_true(
+          uvl::InstantCommand([&]() { intake->enable(); }, {intake}).to_ptr());
+
+  controller->get_trigger(uvl::TriggerButton::kB)
+      .on_true(
+          uvl::InstantCommand([&]() { intake->disable(); }, {intake}).to_ptr());
+
+  uvl::Scheduler::get_instance().mainloop();
+}
