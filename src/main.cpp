@@ -7,7 +7,9 @@
 #include "commands/intake/disable_intake.hpp"
 #include "commands/intake/move_intake.hpp"
 #include "constants/clamp_constants.hpp"
+#include "liblvgl/llemu.hpp"
 #include "pros/misc.h"
+#include "pros/rtos.hpp"
 #include "subsystems/clamp.hpp"
 #include "subsystems/drivetrain.hpp"
 #include "subsystems/intake.hpp"
@@ -16,6 +18,7 @@
 #include "uvlib/input/controller.hpp"
 #include "uvlib/input/trigger.hpp"
 #include "uvlib/scheduler.hpp"
+#include <string>
 
 #define MINT 100000000
 
@@ -26,6 +29,8 @@ Drivetrain *drivetrain;
 Intake *intake;
 Clamp *clamp;
 
+int autoMode = 1;
+
 /**
  * Runs initialization code. This occurs as soon as the program is started.
  *
@@ -34,6 +39,16 @@ Clamp *clamp;
  */
 void initialize() {
   pros::lcd::initialize();
+
+  pros::lcd::register_btn0_cb([]() {
+    autoMode = 0;
+    pros::lcd::set_text(0, "Auto: " + std::to_string(autoMode));
+  });
+
+  pros::lcd::register_btn1_cb([]() {
+    autoMode = 1;
+    pros::lcd::set_text(0, "Auto: " + std::to_string(autoMode));
+  });
 
   controller = new uvl::Controller(pros::E_CONTROLLER_MASTER);
   drivetrain = new Drivetrain();
@@ -77,29 +92,50 @@ void competition_initialize() {}
  * from where it left off.
  */
 void autonomous() {
+  const int TILE_SIZE = 30;
+
   lemlib::Chassis *chassis = drivetrain->get_chassis();
   clamp->set_voltage(-CLAMP_VOLTAGE * 0.5);
+  pros::delay(200);
 
-  chassis->moveToPoint(0, -30, MINT, {.forwards = false}, false);
+  chassis->moveToPoint(0, TILE_SIZE * -0.25, MINT, {.forwards = false}, false);
   pros::delay(200);
 
   clamp->set_voltage(CLAMP_VOLTAGE);
-  pros::delay(200);
+  pros::delay(500);
 
   intake->enable();
   pros::delay(1500);
 
   intake->reverse();
-  pros::delay(500);
+  pros::delay(1000);
 
   intake->disable();
-  chassis->turnToHeading(90, 1000, {}, false);
+  chassis->turnToHeading(182, 1000,
+                         {.direction = AngularDirection::CW_CLOCKWISE}, false);
   pros::delay(200);
 
   intake->enable();
-  chassis->moveToPoint(25, -30, MINT, {}, false);
-  pros::delay(1000);
+  chassis->moveToPoint(0, TILE_SIZE * -1.25, MINT, {}, false);
+  pros::delay(500);
 
+  chassis->turnToHeading(270, 1000, {}, false);
+  pros::delay(200);
+
+  chassis->moveToPoint(TILE_SIZE * -1, TILE_SIZE * -1.25, MINT, {}, false);
+  pros::delay(200);
+
+  chassis->turnToHeading(0, 1000, {}, false);
+  pros::delay(200);
+
+  chassis->moveToPoint(TILE_SIZE * 1, TILE_SIZE * -1, MINT);
+  pros::delay(200);
+
+  chassis->moveToPoint(0, TILE_SIZE * -1, MINT);
+  pros::delay(200);
+
+  intake->reverse();
+  pros::delay(1000);
   intake->disable();
 
   // uvl::Scheduler::get_instance().mainloop();
