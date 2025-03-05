@@ -5,19 +5,18 @@
 #include "pros/abstract_motor.hpp"
 
 /* Ports */
-const int MOTOR_PORT_LEFT_FRONT = 0;
-const int MOTOR_PORT_LEFT_BACK = 2;
-const int MOTOR_PORT_RIGHT_FRONT = 1;
-const int MOTOR_PORT_RIGHT_BACK = 3;
+const int MOTOR_PORT_LEFT_FRONT = 16;
+const int MOTOR_PORT_LEFT_BACK = 19;
+const int MOTOR_PORT_RIGHT_FRONT = 15;
+const int MOTOR_PORT_RIGHT_BACK = 20;
 
-const int IMU_PORT = 0;
+const int IMU_PORT = 17;
 
 /* Configuration */
-const float TRACK_WIDTH = 0.0;
-const float RPM = 0.0;
-const float HORIZONTAL_DRIFT = 0.0;
+const float TRACK_WIDTH = 15.25;
+const float RPM = 600 * 36.0 / 84;
+const float HORIZONTAL_DRIFT = 2.0;
 
 const pros::MotorGearset GEARSET = pros::MotorGearset::blue;
-const float WHEEL_DIAMETER = lemlib::Omniwheel::NEW_2;
-const float DISTANCE = 0;
-const float GEAR_RATIO = 1;
+const float WHEEL_DIAMETER = lemlib::Omniwheel::NEW_4;
+const float GEAR_RATIO = 36.0 / 84;

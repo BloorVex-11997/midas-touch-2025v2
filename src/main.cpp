@@ -2,6 +2,7 @@
 #include "commands/clamp/set_clamp_state.hpp"
 #include "commands/drive/auto_follow.hpp"
 #include "commands/drive/teleop_drive.hpp"
+#include "commands/intake/move_intake.hpp"
 #include "pros/misc.h"
 #include "subsystems/clamp.hpp"
 #include "subsystems/drivetrain.hpp"
@@ -90,12 +91,10 @@ void autonomous() {
  */
 void opcontrol() {
   controller->get_trigger(uvl::TriggerButton::kA)
-      .on_true(
-          uvl::InstantCommand([&]() { intake->enable(); }, {intake}).to_ptr());
+      .on_true(MoveIntake(intake, false).to_ptr());
 
   controller->get_trigger(uvl::TriggerButton::kB)
-      .on_true(
-          uvl::InstantCommand([&]() { intake->disable(); }, {intake}).to_ptr());
+      .on_true(MoveIntake(intake, true).to_ptr());
 
   controller->get_trigger(uvl::TriggerButton::kX)
       .on_true(SetClampState(clamp, ClampState::CLAMPED).to_ptr());
