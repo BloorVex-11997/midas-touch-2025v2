@@ -84,7 +84,23 @@ void autonomous() {
   pros::delay(200);
 
   clamp->set_voltage(CLAMP_VOLTAGE);
+  pros::delay(200);
+
   intake->enable();
+  pros::delay(1500);
+
+  intake->reverse();
+  pros::delay(500);
+
+  intake->disable();
+  chassis->turnToHeading(90, 1000, {}, false);
+  pros::delay(200);
+
+  intake->enable();
+  chassis->moveToPoint(25, -30, MINT, {}, false);
+  pros::delay(1000);
+
+  intake->disable();
 
   // uvl::Scheduler::get_instance().mainloop();
 }
