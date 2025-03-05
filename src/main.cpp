@@ -1,4 +1,6 @@
 #include "main.h"
+#include "commands/clamp/clamp_grab.hpp"
+#include "commands/clamp/clamp_release.hpp"
 #include "commands/clamp/set_clamp_state.hpp"
 #include "commands/drive/auto_follow.hpp"
 #include "commands/drive/teleop_drive.hpp"
@@ -97,10 +99,10 @@ void opcontrol() {
       .on_true(MoveIntake(intake, true).to_ptr());
 
   controller->get_trigger(uvl::TriggerButton::kX)
-      .on_true(SetClampState(clamp, ClampState::CLAMPED).to_ptr());
+      .on_true(ClampGrab(clamp).to_ptr());
 
   controller->get_trigger(uvl::TriggerButton::kY)
-      .on_true(SetClampState(clamp, ClampState::UNCLAMPED).to_ptr());
+      .on_true(ClampRelease(clamp).to_ptr());
 
   uvl::Scheduler::get_instance().mainloop();
 }

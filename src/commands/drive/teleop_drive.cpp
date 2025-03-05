@@ -9,10 +9,10 @@ TeleopDrive::TeleopDrive(Drivetrain *drivetrain, uvl::Controller *controller)
 }
 
 void TeleopDrive::execute() {
-  int leftY = m_left_joystick.get_x();
-  int rightX = m_right_joystick.get_y();
+  int left_y = m_right_joystick.get_y();
+  int right_x = m_left_joystick.get_x();
 
-  m_chassis->curvature(leftY, rightX);
+  m_chassis->curvature(left_y, right_x);
 }
 
 bool TeleopDrive::is_finished() { return false; }

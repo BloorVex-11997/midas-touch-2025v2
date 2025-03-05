@@ -5,8 +5,8 @@
 #include "pros/abstract_motor.hpp"
 
 /* Ports */
-const int MOTOR_PORT_LEFT_FRONT = 16;
-const int MOTOR_PORT_LEFT_BACK = 19;
+const int MOTOR_PORT_LEFT_FRONT = -16;
+const int MOTOR_PORT_LEFT_BACK = -19;
 const int MOTOR_PORT_RIGHT_FRONT = 15;
 const int MOTOR_PORT_RIGHT_BACK = 20;
 
