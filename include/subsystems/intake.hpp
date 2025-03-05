@@ -9,6 +9,8 @@ public:
 
   void enable();
 
+  void reverse();
+
   void disable();
 
 private:

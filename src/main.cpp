@@ -4,7 +4,9 @@
 #include "commands/clamp/set_clamp_state.hpp"
 #include "commands/drive/auto_follow.hpp"
 #include "commands/drive/teleop_drive.hpp"
+#include "commands/intake/disable_intake.hpp"
 #include "commands/intake/move_intake.hpp"
+#include "constants/clamp_constants.hpp"
 #include "pros/misc.h"
 #include "subsystems/clamp.hpp"
 #include "subsystems/drivetrain.hpp"
@@ -12,7 +14,10 @@
 #include "uvlib/commands/advanced_commands/instant_command.hpp"
 #include "uvlib/enums.hpp"
 #include "uvlib/input/controller.hpp"
+#include "uvlib/input/trigger.hpp"
 #include "uvlib/scheduler.hpp"
+
+#define MINT 100000000
 
 ASSET(example_txt);
 
@@ -38,6 +43,8 @@ void initialize() {
   drivetrain->set_default_command(TeleopDrive(drivetrain, controller).to_ptr());
 
   uvl::Scheduler::get_instance().initialize();
+
+  // autonomous();
 }
 
 /**
@@ -70,12 +77,16 @@ void competition_initialize() {}
  * from where it left off.
  */
 void autonomous() {
-  uvl::Scheduler::get_instance().schedule_command(
-      AutoFollow(drivetrain, example_txt, 2, 10000)
-          .and_then(
-              AutoFollow(drivetrain, example_txt, 2, 10000, false).to_ptr()));
+  lemlib::Chassis *chassis = drivetrain->get_chassis();
+  clamp->set_voltage(-CLAMP_VOLTAGE * 0.5);
 
-  uvl::Scheduler::get_instance().mainloop();
+  chassis->moveToPoint(0, -30, MINT, {.forwards = false}, false);
+  pros::delay(200);
+
+  clamp->set_voltage(CLAMP_VOLTAGE);
+  intake->enable();
+
+  // uvl::Scheduler::get_instance().mainloop();
 }
 
 /**
@@ -92,16 +103,19 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-  controller->get_trigger(uvl::TriggerButton::kA)
+  controller->get_trigger(uvl::TriggerButton::kR2)
       .on_true(MoveIntake(intake, false).to_ptr());
 
-  controller->get_trigger(uvl::TriggerButton::kB)
+  controller->get_trigger(uvl::TriggerButton::kL2)
+      .on_true(DisableIntake(intake).to_ptr());
+
+  controller->get_trigger(uvl::TriggerButton::kA)
       .on_true(MoveIntake(intake, true).to_ptr());
 
-  controller->get_trigger(uvl::TriggerButton::kX)
+  controller->get_trigger(uvl::TriggerButton::kR1)
       .on_true(ClampGrab(clamp).to_ptr());
 
-  controller->get_trigger(uvl::TriggerButton::kY)
+  controller->get_trigger(uvl::TriggerButton::kL1)
       .on_true(ClampRelease(clamp).to_ptr());
 
   uvl::Scheduler::get_instance().mainloop();

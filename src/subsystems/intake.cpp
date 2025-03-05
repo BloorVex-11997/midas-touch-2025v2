@@ -12,4 +12,6 @@ void Intake::set_voltage(int intake_voltage, int elevator_voltage) {
 
 void Intake::enable() { set_voltage(INTAKE_VOLTAGE, ELEVATOR_VOLTAGE); }
 
+void Intake::reverse() { set_voltage(-INTAKE_VOLTAGE, -ELEVATOR_VOLTAGE); }
+
 void Intake::disable() { set_voltage(0, 0); }

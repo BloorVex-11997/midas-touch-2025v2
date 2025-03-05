@@ -10,7 +10,7 @@ void MoveIntake::initialize() {
   if (!m_reverse) {
     m_intake->enable();
   } else {
-    m_intake->disable();
+    m_intake->reverse();
   }
 
   m_completed = true;
